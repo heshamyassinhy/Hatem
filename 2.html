@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | أكاديمية درعه الاحترافية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary-pink: #ff69b4;
+            --dark-bg: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background-color: var(--dark-bg); 
+            color: white; 
+            min-height: 100vh;
+        }
+
+        .glass { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+
+        .pink-gradient { 
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); 
+        }
+
+        .pink-btn {
+            background: var(--primary-pink);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pink-btn:hover:not(:disabled) {
+            background: #ff1493;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px #ff1493;
+        }
+
+        .pink-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-pink); border-radius: 10px; }
+
+        .modal-animate {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .input-style {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .input-style:focus {
+            border-color: var(--primary-pink);
+            background: rgba(255, 255, 255, 0.12);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 glass p-8 rounded-[2rem] gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">لوحة تحكم <span class="text-pink-400">المشرف</span></h1>
+                <p class="text-gray-400 mt-1">أهلاً بك في نظام إدارة المحتوى لأكاديمية درعه</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="trainee_page.html" target="_blank" class="px-6 py-3 border border-white/20 rounded-2xl hover:bg-white/5 transition flex items-center gap-2">
+                    <span>عرض المنصة</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+                <button onclick="showCreateModal()" class="pink-btn px-8 py-3 rounded-2xl font-bold shadow-xl flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    إنشاء دورة جديدة
+                </button>
+            </div>
+        </div>
+
+        <!-- Courses Grid -->
+        <div id="coursesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- سيتم تحميل الكروت هنا -->
+        </div>
+    </div>
+
+    <!-- Modal: Create Course -->
+    <div id="createModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 items-center justify-center p-4">
+        <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] modal-animate shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-pink-400 flex items-center gap-3">
+                <span class="p-2 bg-pink-500/20 rounded-lg">📚</span>
+                بيانات الدورة الأساسية
+            </h2>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2 mr-1">عنوان الدورة</label>
+                    <input type="text" id="courseName" placeholder="مثال: التصميم الجرافيكي المتقدم" class="w-full input-style p-4 rounded-2xl">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2 mr-1">صورة غلاف الدورة (من جهازك)</label>
+                    <div class="relative">
+                        <input type="file" id="courseImgFile" accept="image/*" class="hidden" onchange="previewImage(this)">
+                        <label for="courseImgFile" class="w-full cursor-pointer bg-white/5 border-2 border-dashed border-white/10 p-6 rounded-2xl flex flex-col items-center hover:border-pink-500/50 transition">
+                            <div id="imgPreview" class="hidden mb-3 w-full h-32 rounded-xl overflow-hidden">
+                                <img id="targetPreview" src="" class="w-full h-full object-cover">
+                            </div>
+                            <svg id="imgIcon" class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span id="imgNameDisplay" class="text-sm text-gray-400">اختر صورة الغلاف</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <button id="saveCourseBtn" onclick="saveCourse()" class="pink-btn w-full py-4 rounded-2xl font-bold text-lg">بدء إنشاء المحتوى</button>
+                    <button onclick="hideModal('createModal')" class="w-full mt-4 text-gray-500 hover:text-white transition text-sm">إلغاء العملية</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Content (الواجهة الاحترافية) -->
+    <div id="editModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-50 overflow-y-auto p-4">
+        <div class="glass max-w-5xl mx-auto my-8 p-8 rounded-[3rem] relative shadow-2xl">
+            <button onclick="hideModal('editModal')" class="absolute top-8 left-8 p-2 hover:bg-white/10 rounded-full transition text-gray-400">&times;</button>
+            
+            <div class="mb-10">
+                <span class="text-pink-500 font-bold text-sm tracking-widest uppercase">تعديل المحتوى</span>
+                <h2 id="editCourseTitle" class="text-3xl font-bold mt-2"></h2>
+            </div>
+            
+            <div class="grid lg:grid-cols-5 gap-10">
+                <!-- دروس الدورة -->
+                <div class="lg:col-span-3">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-pink-500 rounded-full"></span>
+                        قائمة الدروس الحالية
+                    </h3>
+                    <div id="lessonsList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- الدروس تظهر هنا -->
+                    </div>
+                </div>
+
+                <!-- رفع فيديو جديد -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white/5 p-8 rounded-[2rem] border border-white/5">
+                        <h3 class="font-bold text-pink-400 mb-6 flex items-center gap-2 text-lg">
+                            <span>🎥</span> رفع فيديو الدرس
+                        </h3>
+                        <div class="space-y-4">
+                            <input type="text" id="lessonName" placeholder="عنوان الدرس" class="w-full input-style p-3 rounded-xl text-sm">
+                            
+                            <div class="relative">
+                                <input type="file" id="contentFile" accept="video/*" class="hidden" onchange="updateFileName(this)">
+                                <label for="contentFile" class="w-full cursor-pointer bg-white/5 border-2 border-dashed border-white/10 p-6 rounded-xl flex flex-col items-center hover:border-pink-500/50 transition">
+                                    <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                    <span id="fileNameDisplay" class="text-sm text-gray-400">اختر ملف الفيديو</span>
+                                </label>
+                            </div>
+
+                            <div class="text-center text-xs text-gray-500">أو أدخل رابط فيديو (للملفات الكبيرة)</div>
+                            <input type="text" id="lessonUrl" placeholder="رابط فيديو (YouTube/Drive)" class="w-full input-style p-3 rounded-xl text-sm">
+
+                            <!-- شريط التقدم المطور -->
+                            <div id="progressArea" class="hidden">
+                                <div class="flex justify-between text-xs mb-2">
+                                    <span id="progressStatus" class="text-pink-400 font-bold italic">جاري المعالجة...</span>
+                                    <span id="progressPercent" class="text-gray-400">0%</span>
+                                </div>
+                                <div class="w-full bg-white/10 rounded-full h-1.5">
+                                    <div id="progressBar" class="pink-gradient h-1.5 rounded-full shadow-[0_0_10px_#ff69b4]" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <button id="addLessonBtn" onclick="addLessonWithFile()" class="pink-btn w-full py-3 rounded-xl font-bold flex justify-center items-center gap-2 shadow-lg">
+                                <span>إضافة للدروس</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- حالة النشر -->
+                    <div class="bg-white/5 p-6 rounded-[2rem] flex items-center justify-between border border-white/5">
+                        <div>
+                            <p class="font-bold text-sm">نشر الدورة</p>
+                            <p class="text-[10px] text-gray-500 italic">ستظهر فوراً للمتدربين</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="isPublished" class="sr-only peer">
+                            <div class="w-14 h-7 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-500"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- الحفظ النهائي -->
+            <div class="mt-10 pt-8 border-t border-white/10 flex justify-end gap-4">
+                <button onclick="updateCourseData()" class="pink-btn px-12 py-4 rounded-2xl font-bold shadow-2xl text-lg flex items-center gap-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    حفظ كافة التغييرات
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // دالة لفحص حجم التخزين المتبقي تقريبياً
+        function getLocalStorageSize() {
+            let total = 0;
+            for (let x in localStorage) {
+                if (localStorage.hasOwnProperty(x)) {
+                    total += ((localStorage[x].length + x.length) * 2);
+                }
+            }
+            return (total / 1024 / 1024).toFixed(2); // بالميجابايت
+        }
+
+        let courses = JSON.parse(localStorage.getItem('deraah_courses')) || [];
+        let currentEditId = null;
+
+        function renderCourses() {
+            const container = document.getElementById('coursesContainer');
+            container.innerHTML = '';
+            
+            if (courses.length === 0) {
+                container.innerHTML = '<div class="col-span-full py-20 text-center glass rounded-3xl text-gray-500">لا توجد دورات حالياً.. ابدأ بإنشاء دورتك الأولى</div>';
+                return;
+            }
+
+            courses.forEach(course => {
+                const lessonsCount = course.lessons ? course.lessons.length : 0;
+                container.innerHTML += `
+                    <div class="glass p-5 rounded-[2rem] group hover:border-pink-500/30 transition-all duration-500">
+                        <div class="relative overflow-hidden rounded-2xl mb-5">
+                            <img src="${course.image || 'https://via.placeholder.com/400x225?text=Deraah+Academy'}" 
+                                 class="w-full h-44 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-[10px] font-bold border border-white/10">
+                                ${lessonsCount} دروس
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg mb-4 truncate">${course.name}</h3>
+                        <div class="flex gap-2">
+                            <button onclick="openEdit(${course.id})" class="flex-1 bg-white/5 py-3 rounded-xl text-xs font-bold hover:bg-pink-500/10 hover:text-pink-400 transition-colors">إدارة المحتوى</button>
+                            <button onclick="deleteCourse(${course.id})" class="bg-red-500/10 text-red-500 px-4 py-3 rounded-xl hover:bg-red-500 hover:text-white transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function showCreateModal() { document.getElementById('createModal').style.display = 'flex'; }
+        
+        function hideModal(id) { 
+            document.getElementById(id).style.display = 'none'; 
+            if(id === 'editModal') {
+                document.getElementById('progressArea').classList.add('hidden');
+                document.getElementById('progressBar').style.width = '0%';
+            }
+            if(id === 'createModal') {
+                document.getElementById('imgPreview').classList.add('hidden');
+                document.getElementById('imgIcon').classList.remove('hidden');
+                document.getElementById('imgNameDisplay').innerText = "اختر صورة الغلاف";
+            }
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('targetPreview').src = e.target.result;
+                    document.getElementById('imgPreview').classList.remove('hidden');
+                    document.getElementById('imgIcon').classList.add('hidden');
+                    document.getElementById('imgNameDisplay').innerText = input.files[0].name;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updateFileName(input) {
+            const fileName = input.files[0] ? input.files[0].name : "اختر ملف الفيديو";
+            document.getElementById('fileNameDisplay').innerText = fileName;
+        }
+
+        async function saveCourse() {
+            const name = document.getElementById('courseName').value;
+            const imgFile = document.getElementById('courseImgFile').files[0];
+            
+            if(!name) return alert("الرجاء إدخال اسم الدورة");
+
+            let imageData = "";
+            if(imgFile) {
+                // فحص حجم الصورة
+                if (imgFile.size > 1024 * 1024) { // أكثر من 1 ميجا
+                    return alert("⚠️ حجم الصورة كبير جداً، يرجى اختيار صورة أقل من 1 ميجابايت.");
+                }
+
+                const reader = new FileReader();
+                imageData = await new Promise(resolve => {
+                    reader.onload = e => resolve(e.target.result);
+                    reader.readAsDataURL(imgFile);
+                });
+            }
+
+            courses.push({ 
+                id: Date.now(), 
+                name: name, 
+                image: imageData, 
+                lessons: [], 
+                published: false 
+            });
+            
+            try {
+                localStorage.setItem('deraah_courses', JSON.stringify(courses));
+                renderCourses();
+                hideModal('createModal');
+                document.getElementById('courseName').value = '';
+                document.getElementById('courseImgFile').value = '';
+            } catch (e) {
+                alert("⚠️ مساحة المتصفح لا تكفي لحفظ هذه الصورة. يرجى حذف بعض الدورات القديمة.");
+                courses.pop();
+            }
+        }
+
+        function openEdit(id) {
+            currentEditId = id;
+            const course = courses.find(c => c.id === id);
+            document.getElementById('editCourseTitle').innerText = course.name;
+            document.getElementById('isPublished').checked = course.published;
+            renderLessonsList();
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function renderLessonsList() {
+            const course = courses.find(c => c.id === currentEditId);
+            const list = document.getElementById('lessonsList');
+            
+            if (course.lessons.length === 0) {
+                list.innerHTML = '<div class="p-10 border-2 border-dashed border-white/5 rounded-2xl text-center text-gray-500 italic">لا توجد دروس مرفوعة بعد</div>';
+                return;
+            }
+
+            list.innerHTML = course.lessons.map((l, i) => `
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 hover:border-white/10 transition">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold text-xs">${i + 1}</span>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-sm">${l.name}</span>
+                            <span class="text-[10px] text-gray-500 italic">${l.fileUrl.startsWith('data:') ? 'ملف مرفوع' : 'رابط خارجي'}</span>
+                        </div>
+                    </div>
+                    <button onclick="removeLesson(${idx})" class="text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition">حذف</button>
+                </div>
+            `).join('');
+        }
+
+        async function addLessonWithFile() {
+            const name = document.getElementById('lessonName').value;
+            const fileInput = document.getElementById('contentFile');
+            const urlInput = document.getElementById('lessonUrl').value;
+            const progressArea = document.getElementById('progressArea');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const btn = document.getElementById('addLessonBtn');
+
+            if(!name) return alert("يرجى إدخال اسم الدرس");
+            if(!fileInput.files[0] && !urlInput) return alert("يرجى رفع ملف فيديو أو إدخال رابط");
+
+            const course = courses.find(c => c.id === currentEditId);
+
+            // الحالة الأولى: استخدام رابط (الأفضل للمساحة)
+            if(urlInput) {
+                course.lessons.push({ name: name, fileUrl: urlInput });
+                renderLessonsList();
+                document.getElementById('lessonName').value = '';
+                document.getElementById('lessonUrl').value = '';
+                return;
+            }
+
+            // الحالة الثانية: رفع ملف فيديو
+            const file = fileInput.files[0];
+            // تنبيه إذا كان حجم الفيديو كبيراً جداً (أكثر من 3 ميجا مثلاً للمتصفح)
+            if (file.size > 3 * 1024 * 1024) {
+                return alert("⚠️ حجم الفيديو كبير جداً بالنسبة لذاكرة المتصفح (الحد الأقصى 3MB).\n\nنصيحة: يرجى رفع الفيديو على YouTube أو Google Drive ووضع الرابط هنا بدلاً من رفعه كملف.");
+            }
+
+            progressArea.classList.remove('hidden');
+            btn.disabled = true;
+
+            const reader = new FileReader();
+            reader.onprogress = (e) => {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percent + '%';
+                    progressPercent.innerText = percent + '%';
+                }
+            };
+
+            reader.onload = async (e) => {
+                course.lessons.push({ name: name, fileUrl: e.target.result });
+                renderLessonsList();
+                
+                setTimeout(() => {
+                    progressArea.classList.add('hidden');
+                    progressBar.style.width = '0%';
+                    fileInput.value = '';
+                    document.getElementById('lessonName').value = '';
+                    document.getElementById('fileNameDisplay').innerText = "اختر ملف الفيديو";
+                    btn.disabled = false;
+                }, 500);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function removeLesson(idx) {
+            const course = courses.find(c => c.id === currentEditId);
+            course.lessons.splice(idx, 1);
+            renderLessonsList();
+        }
+
+        function updateCourseData() {
+            const course = courses.find(c => c.id === currentEditId);
+            course.published = document.getElementById('isPublished').checked;
+            
+            try {
+                // محاولة الحفظ مع فحص المساحة
+                const dataString = JSON.stringify(courses);
+                localStorage.setItem('deraah_courses', dataString);
+                
+                renderCourses();
+                hideModal('editModal');
+                
+                const toast = document.createElement('div');
+                toast.className = "fixed bottom-10 right-10 pink-gradient p-4 rounded-2xl shadow-2xl font-bold animate-bounce z-[100]";
+                toast.innerText = "✅ تم حفظ التغييرات بنجاح!";
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            } catch (e) {
+                alert("⚠️ خطأ Out of Memory: لقد تجاوزت المساحة المسموح بها في المتصفح!\n\nالحل: قم بحذف هذا الدرس الأخير، واستخدم 'رابط فيديو' بدلاً من رفع الملف مباشرة.");
+            }
+        }
+
+        function deleteCourse(id) {
+            if(confirm('سيتم حذف الدورة نهائياً، هل أنت متأكد؟')) {
+                courses = courses.filter(c => c.id !== id);
+                localStorage.setItem('deraah_courses', JSON.stringify(courses));
+                renderCourses();
+            }
+        }
+
+        renderCourses();
+    </script>
+</body>
+</html>

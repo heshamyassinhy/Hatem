@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deraah - الصفحة الرئيسية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* أنيميشن لتغيير الخلفيات */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* تنسيق شريط التنقل */
+        nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* تنسيق البوب أب */
+        #popupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            min-width: 300px;
+        }
+
+        .hero-section {
+            height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body id="bgBody">
+
+    <!-- شريط التنقل -->
+    <nav class="flex items-center justify-between px-8 py-4 fixed w-full top-0 z-50">
+        <!-- اللوجو -->
+        <div class="logo">
+            <img src="Deraah2.png" alt="Logo" class="h-12 w-auto" onerror="this.src='https://via.placeholder.com/150x50?text=Deraah+Logo'">
+        </div>
+
+        <!-- الأزرار -->
+        <div class="flex gap-4">
+            <button onclick="showPopup()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">
+                About
+            </button>
+            <a href="2.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">
+                العنوان
+            </a>
+            <!-- تم تعديل الرابط هنا ليوجه إلى اليوتيوب -->
+            <a href="https://www.youtube.com/watch?v=d1W5gK9sX6E" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">
+                التليفون
+            </a>
+        </div>
+    </nav>
+
+    <!-- محتوى الصفحة الرئيسي -->
+    <div class="hero-section text-center">
+        <h1 class="text-5xl font-bold mb-4">حاتم جمال</h1>
+        <p class="text-xl">نحن نقدم أفضل الحلول لعملائنا بكل فخر</p>
+    </div>
+
+    <!-- نافذة البوب أب (Pop-up) -->
+    <div id="popupOverlay">
+        <div class="popup-content">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">رسالة ترحيب</h2>
+            <p class="text-lg text-gray-600 mb-6">عامل ايه؟</p>
+            <button onclick="hidePopup()" class="bg-red-500 hover:bg-red-600 text-white py-2 px-8 rounded-lg transition">
+                إغلاق
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 1. منطق تغيير الخلفيات
+        const backgrounds = [
+            'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1920', // كيمياء/تكنولوجيا زرقاء
+            'https://images.unsplash.com/photo-1532187863486-abf9d39d9992?auto=format&fit=crop&q=80&w=1920', // مختبرات
+            'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1920'  // علوم حديثة
+        ];
+
+        let currentBgIndex = 0;
+        const body = document.getElementById('bgBody');
+
+        function changeBackground() {
+            body.style.backgroundImage = `url('${backgrounds[currentBgIndex]}')`;
+            currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
+        }
+
+        // تغيير الخلفية كل 5 ثواني
+        setInterval(changeBackground, 5000);
+        changeBackground(); // تشغيل أول خلفية فوراً
+
+        // 2. منطق البوب أب
+        function showPopup() {
+            document.getElementById('popupOverlay').style.display = 'flex';
+        }
+
+        function hidePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
+        // إغلاق البوب أب عند الضغط خارج المحتوى
+        window.onclick = function(event) {
+            const overlay = document.getElementById('popupOverlay');
+            if (event.target == overlay) {
+                hidePopup();
+            }
+        }
+    </script>
+</body>
+</html>
